@@ -8,6 +8,8 @@
 import { KeyManagementServiceClient } from "@google-cloud/kms";
 import { Storage } from "@google-cloud/storage";
 import type { HealthChecker, InfraConfig, BoundaryOutput, HealthCheck } from "@aegis/infra-sdk";
+import { fetchWithRetry, TIMEOUTS } from "./fetch-retry.js";
+import { getAdcToken } from "./token-cache.js";
 
 function handleCheckError(name: string, err: unknown): HealthCheck {
   const message = err instanceof Error ? err.message : String(err);
@@ -147,18 +149,7 @@ async function checkModelAccessible(
     const projectId = config.params["project_id"];
     const endpoint = outputs?.["vertex_endpoint"] ?? `${region}-aiplatform.googleapis.com`;
 
-    const { GoogleAuth } = await import("google-auth-library");
-    const auth = new GoogleAuth({ scopes: ["https://www.googleapis.com/auth/cloud-platform"] });
-    const client = await auth.getClient();
-    const token = await client.getAccessToken();
-
-    if (!token.token) {
-      return {
-        name: "model_accessible",
-        status: "fail",
-        detail: "Failed to obtain ADC token for Vertex AI access check",
-      };
-    }
+    const token = await getAdcToken();
 
     // Hit the exact generateContent endpoint that aegis-cli will use.
     // A minimal request with a trivial prompt validates the full path:
@@ -167,18 +158,21 @@ async function checkModelAccessible(
       `https://${endpoint}/v1/projects/${projectId}` +
       `/locations/${region}/publishers/google/models/${model}:generateContent`;
 
-    const response = await fetch(inferenceUrl, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token.token}`,
-        "Content-Type": "application/json",
+    const response = await fetchWithRetry(
+      inferenceUrl,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts: [{ text: "ping" }] }],
+          generationConfig: { maxOutputTokens: 1 },
+        }),
       },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: "ping" }] }],
-        generationConfig: { maxOutputTokens: 1 },
-      }),
-      signal: AbortSignal.timeout(15000),
-    });
+      { timeoutMs: TIMEOUTS.inference(), maxRetries: 1 },
+    );
 
     if (response.ok) {
       return {

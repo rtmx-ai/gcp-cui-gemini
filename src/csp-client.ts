@@ -1,18 +1,13 @@
 /**
  * GCP-specific CspClient implementation.
- * Thin wrapper over GCP REST APIs using Application Default Credentials.
+ * Uses fetchWithRetry for resilient API calls and cached ADC tokens.
+ *
+ * Implements: REQ-GCG-010
  */
 
 import type { CspClient, InfraConfig } from "@aegis/infra-sdk";
-
-async function getAdcToken(): Promise<string> {
-  const { GoogleAuth } = await import("google-auth-library");
-  const auth = new GoogleAuth({ scopes: ["https://www.googleapis.com/auth/cloud-platform"] });
-  const client = await auth.getClient();
-  const token = await client.getAccessToken();
-  if (!token.token) throw new Error("Failed to obtain ADC access token");
-  return token.token;
-}
+import { fetchWithRetry, TIMEOUTS } from "./fetch-retry.js";
+import { getAdcToken } from "./token-cache.js";
 
 export class GcpClient implements CspClient {
   async validateCredentials(): Promise<boolean> {
@@ -28,12 +23,10 @@ export class GcpClient implements CspClient {
     try {
       const token = await getAdcToken();
       const projectId = config.params["project_id"];
-      const resp = await fetch(
+      const resp = await fetchWithRetry(
         `https://cloudresourcemanager.googleapis.com/v1/projects/${projectId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          signal: AbortSignal.timeout(10000),
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
+        { timeoutMs: TIMEOUTS.api() },
       );
       return resp.ok;
     } catch {
@@ -45,12 +38,10 @@ export class GcpClient implements CspClient {
     try {
       const token = await getAdcToken();
       const projectId = config.params["project_id"];
-      const resp = await fetch(
+      const resp = await fetchWithRetry(
         `https://serviceusage.googleapis.com/v1/projects/${projectId}/services/${api}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          signal: AbortSignal.timeout(10000),
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
+        { timeoutMs: TIMEOUTS.api() },
       );
       if (!resp.ok) return "DISABLED";
       const data = (await resp.json()) as { state?: string };
@@ -63,7 +54,7 @@ export class GcpClient implements CspClient {
   async enableApi(config: InfraConfig, api: string): Promise<void> {
     const token = await getAdcToken();
     const projectId = config.params["project_id"];
-    const resp = await fetch(
+    const resp = await fetchWithRetry(
       `https://serviceusage.googleapis.com/v1/projects/${projectId}/services/${api}:enable`,
       {
         method: "POST",
@@ -71,8 +62,8 @@ export class GcpClient implements CspClient {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        signal: AbortSignal.timeout(30000),
       },
+      { timeoutMs: TIMEOUTS.enable() },
     );
     if (!resp.ok) {
       const body = await resp.text();
@@ -80,43 +71,31 @@ export class GcpClient implements CspClient {
     }
   }
 
-  /**
-   * Discover the organization's Access Context Manager access policy ID.
-   * Most GCP orgs have exactly one access policy. Returns the policy number
-   * or undefined if none found or insufficient permissions.
-   *
-   * Discovery path: project -> ancestor org -> access policies for that org.
-   */
   async discoverAccessPolicyId(config: InfraConfig): Promise<string | undefined> {
     try {
       const token = await getAdcToken();
       const projectId = config.params["project_id"];
 
-      // Step 1: Get the project's parent organization
-      const projResp = await fetch(
+      const projResp = await fetchWithRetry(
         `https://cloudresourcemanager.googleapis.com/v3/projects/${projectId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          signal: AbortSignal.timeout(10000),
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
+        { timeoutMs: TIMEOUTS.api() },
       );
       if (!projResp.ok) return undefined;
 
       const projData = (await projResp.json()) as { parent?: string };
-      // parent is either "organizations/123" or "folders/456"
       let orgId: string | undefined;
 
       if (projData.parent?.startsWith("organizations/")) {
         orgId = projData.parent;
       } else if (projData.parent?.startsWith("folders/")) {
-        // Walk up the folder hierarchy to find the org
-        const ancestryResp = await fetch(
+        const ancestryResp = await fetchWithRetry(
           `https://cloudresourcemanager.googleapis.com/v1/projects/${projectId}:getAncestry`,
           {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
-            signal: AbortSignal.timeout(10000),
           },
+          { timeoutMs: TIMEOUTS.api() },
         );
         if (!ancestryResp.ok) return undefined;
         const ancestry = (await ancestryResp.json()) as {
@@ -130,13 +109,10 @@ export class GcpClient implements CspClient {
 
       if (!orgId) return undefined;
 
-      // Step 2: List access policies for the organization
-      const policiesResp = await fetch(
+      const policiesResp = await fetchWithRetry(
         `https://accesscontextmanager.googleapis.com/v1/accessPolicies?parent=${orgId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          signal: AbortSignal.timeout(10000),
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
+        { timeoutMs: TIMEOUTS.api() },
       );
       if (!policiesResp.ok) return undefined;
 
@@ -145,7 +121,6 @@ export class GcpClient implements CspClient {
       };
 
       if (policies.accessPolicies && policies.accessPolicies.length > 0) {
-        // Return the numeric ID from "accessPolicies/123456"
         const policyName = policies.accessPolicies[0].name;
         return policyName?.replace("accessPolicies/", "");
       }
