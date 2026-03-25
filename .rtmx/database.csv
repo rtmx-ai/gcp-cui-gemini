@@ -23,3 +23,5 @@ REQ-GCG-007,STATUS,VPC-SC Perimeter Validation and Vertex AI Model Access,src/in
 REQ-GCG-007,STATUS,VPC-SC Perimeter Validation and Vertex AI Model Access,src/infrastructure/__tests__/health.test.ts,checkVertexAiAccessible,Unit Test,TODO,HIGH,Phase 3,.rtmx/requirements/STATUS/REQ-GCG-007.md
 REQ-GCG-007,STATUS,VPC-SC Perimeter Validation and Vertex AI Model Access,tests/features/status/vpc-sc-vertex.feature,vpc_sc_vertex_scenarios,E2E Test,TODO,HIGH,Phase 3,.rtmx/requirements/STATUS/REQ-GCG-007.md
 REQ-GCG-008,INFRA,Pre-commit Hook Enforcement,manual,manual_verification,Manual,TODO,MEDIUM,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-008.md
+REQ-GCG-009,PROTOCOL,Extract @aegis/infra-sdk for Plugin Ecosystem,aegis-infra-sdk/src/__tests__/entrypoint.test.ts,createPluginCli,Unit Test,TODO,HIGH,Phase 3,.rtmx/requirements/PROTOCOL/REQ-GCG-009.md
+REQ-GCG-009,PROTOCOL,Extract @aegis/infra-sdk for Plugin Ecosystem,aegis-infra-sdk/src/__tests__/lifecycle.test.ts,runLifecycle,Unit Test,TODO,HIGH,Phase 3,.rtmx/requirements/PROTOCOL/REQ-GCG-009.md
