@@ -1,5 +1,11 @@
 # gcp-assured-workloads
 
+[![CI](https://github.com/rtmx-ai/gcp-assured-workloads/actions/workflows/ci.yml/badge.svg)](https://github.com/rtmx-ai/gcp-assured-workloads/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node: >=22](https://img.shields.io/badge/Node-%3E%3D22-green.svg)](.nvmrc)
+[![Protocol: aegis-infra/v1](https://img.shields.io/badge/Protocol-aegis--infra%2Fv1-purple.svg)](https://github.com/rtmx-ai/aegis-infra-sdk/blob/main/PLUGIN_GUIDE.md)
+[![SDK: @aegis/infra-sdk](https://img.shields.io/badge/SDK-%40aegis%2Finfra--sdk-orange.svg)](https://github.com/rtmx-ai/aegis-infra-sdk)
+
 IL4/IL5 Assured Workloads boundary plugin for [aegis-cli](https://github.com/rtmx-ai/aegis-cli). Provisions a hardened GCP environment with Vertex AI Gemini access for CUI (Controlled Unclassified Information) workloads.
 
 ## How It Works
