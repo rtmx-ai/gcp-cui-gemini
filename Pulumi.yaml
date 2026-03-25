@@ -1,0 +1,8 @@
+name: gcp-cui-gemini
+runtime: nodejs
+description: IL4/IL5 Assured Workloads boundary with Vertex AI Gemini
+config:
+  gcp:region:
+    value: us-central1
+  gcp:project:
+    description: GCP project ID for the Assured Workloads boundary

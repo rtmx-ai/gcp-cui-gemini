@@ -1,0 +1,6 @@
+rtmx:
+  database: .rtmx/database.csv
+  requirements_dir: .rtmx/requirements
+  schema: core
+  vitest:
+    marker_prefix: "req"
