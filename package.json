@@ -1,12 +1,12 @@
 {
-  "name": "gcp-cui-gemini",
-  "version": "0.1.0",
+  "name": "gcp-assured-workloads",
+  "version": "0.2.0",
   "description": "IL4/IL5 Assured Workloads boundary plugin for aegis-cli",
   "license": "MIT",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "gcp-cui-gemini": "dist/index.js"
+    "gcp-assured-workloads": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -23,6 +23,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@aegis/infra-sdk": "file:../aegis-infra-sdk",
     "@google-cloud/aiplatform": "^3.0.0",
     "@google-cloud/compute": "^4.0.0",
     "@google-cloud/kms": "^4.0.0",

@@ -1,4 +1,4 @@
-# gcp-cui-gemini
+# gcp-assured-workloads
 
 IL4/IL5 Assured Workloads boundary plugin for [aegis-cli](https://github.com/rtmx-ai/aegis-cli). Provisions a hardened GCP environment with Vertex AI Gemini access for CUI (Controlled Unclassified Information) workloads.
 
@@ -10,7 +10,7 @@ aegis-cli invokes this plugin as a subprocess during `aegis init`, `aegis doctor
 flowchart LR
     subgraph Workstation
         A["aegis-cli\n(Rust binary)"]
-        B["gcp-cui-gemini\n(Node.js / Pulumi)"]
+        B["gcp-assured-workloads\n(Node.js / Pulumi)"]
     end
 
     subgraph Google Cloud

@@ -1,4 +1,4 @@
-name: gcp-cui-gemini
+name: gcp-assured-workloads
 runtime: nodejs
 description: IL4/IL5 Assured Workloads boundary with Vertex AI Gemini
 config:

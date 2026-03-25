@@ -1,12 +1,10 @@
 /**
- * Live implementation of GcpApiClient using GCP REST APIs via ADC.
- *
- * Implements: REQ-GCG-005
+ * GCP-specific CspClient implementation.
+ * Thin wrapper over GCP REST APIs using Application Default Credentials.
  */
 
-import type { GcpApiClient } from "./gcp-apis.js";
+import type { CspClient, InfraConfig } from "@aegis/infra-sdk";
 
-/** Fetch an ADC access token from the metadata or local credentials. */
 async function getAdcToken(): Promise<string> {
   const { GoogleAuth } = await import("google-auth-library");
   const auth = new GoogleAuth({ scopes: ["https://www.googleapis.com/auth/cloud-platform"] });
@@ -16,7 +14,7 @@ async function getAdcToken(): Promise<string> {
   return token.token;
 }
 
-export class LiveGcpApiClient implements GcpApiClient {
+export class GcpClient implements CspClient {
   async validateCredentials(): Promise<boolean> {
     try {
       await getAdcToken();
@@ -26,9 +24,10 @@ export class LiveGcpApiClient implements GcpApiClient {
     }
   }
 
-  async checkProjectAccess(projectId: string): Promise<boolean> {
+  async checkAccess(config: InfraConfig): Promise<boolean> {
     try {
       const token = await getAdcToken();
+      const projectId = config.params["project_id"];
       const resp = await fetch(
         `https://cloudresourcemanager.googleapis.com/v1/projects/${projectId}`,
         {
@@ -42,9 +41,10 @@ export class LiveGcpApiClient implements GcpApiClient {
     }
   }
 
-  async getApiState(projectId: string, api: string): Promise<"ENABLED" | "DISABLED"> {
+  async getApiState(config: InfraConfig, api: string): Promise<"ENABLED" | "DISABLED"> {
     try {
       const token = await getAdcToken();
+      const projectId = config.params["project_id"];
       const resp = await fetch(
         `https://serviceusage.googleapis.com/v1/projects/${projectId}/services/${api}`,
         {
@@ -60,8 +60,9 @@ export class LiveGcpApiClient implements GcpApiClient {
     }
   }
 
-  async enableApi(projectId: string, api: string): Promise<void> {
+  async enableApi(config: InfraConfig, api: string): Promise<void> {
     const token = await getAdcToken();
+    const projectId = config.params["project_id"];
     const resp = await fetch(
       `https://serviceusage.googleapis.com/v1/projects/${projectId}/services/${api}:enable`,
       {

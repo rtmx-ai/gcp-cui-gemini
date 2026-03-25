@@ -1,12 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { complianceLabels, extractOutputs } from "../stack.js";
 
-// @req REQ-GCG-002: applyComplianceLabels, extractOutputs
+// @req REQ-GCG-002: compliance labels and output extraction
 
 describe("complianceLabels", () => {
   it("returns aegis-managed label", () => {
-    const labels = complianceLabels("IL4");
-    expect(labels["aegis-managed"]).toBe("true");
+    expect(complianceLabels("IL4")["aegis-managed"]).toBe("true");
   });
 
   it("lowercases impact level", () => {
@@ -15,13 +14,12 @@ describe("complianceLabels", () => {
   });
 
   it("includes nist-800-171 compliance framework", () => {
-    const labels = complianceLabels("IL4");
-    expect(labels["compliance-framework"]).toBe("nist-800-171");
+    expect(complianceLabels("IL4")["compliance-framework"]).toBe("nist-800-171");
   });
 });
 
 describe("extractOutputs", () => {
-  it("maps Pulumi output values to ResourceOutput", () => {
+  it("maps Pulumi output values to BoundaryOutput", () => {
     const pulumiOutputs = {
       vertex_endpoint: { value: "us-central1-aiplatform.googleapis.com", secret: false },
       kms_key_resource_name: {
@@ -34,19 +32,15 @@ describe("extractOutputs", () => {
     };
 
     const output = extractOutputs(pulumiOutputs);
-    expect(output.vertexEndpoint).toBe("us-central1-aiplatform.googleapis.com");
-    expect(output.kmsKeyResourceName).toContain("keyRings");
-    expect(output.vpcName).toBe("aegis-vpc-abc123");
-    expect(output.auditBucket).toBe("aegis-audit-logs-xyz789");
-    expect(output.perimeterConfigured).toBe(true);
+    expect(output["vertex_endpoint"]).toBe("us-central1-aiplatform.googleapis.com");
+    expect(output["kms_key_resource_name"]).toContain("keyRings");
+    expect(output["vpc_name"]).toBe("aegis-vpc-abc123");
+    expect(output["audit_bucket"]).toBe("aegis-audit-logs-xyz789");
+    expect(output["perimeter_configured"]).toBe("true");
   });
 
   it("handles missing outputs gracefully", () => {
     const output = extractOutputs({});
-    expect(output.vertexEndpoint).toBe("");
-    expect(output.kmsKeyResourceName).toBe("");
-    expect(output.vpcName).toBe("");
-    expect(output.auditBucket).toBe("");
-    expect(output.perimeterConfigured).toBe(false);
+    expect(Object.keys(output)).toHaveLength(0);
   });
 });

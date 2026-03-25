@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Purpose
 
-gcp-cui-gemini is an IaC deployer plugin for [aegis-cli](https://github.com/rtmx-ai/aegis-cli) that provisions an IL4/IL5-grade Assured Workloads boundary in Google Cloud with Vertex AI Gemini access. It implements the `aegis-infra/v1` contract and communicates with aegis-cli's Rust binary over a JSON-line stdout protocol.
+gcp-assured-workloads is an IaC deployer plugin for [aegis-cli](https://github.com/rtmx-ai/aegis-cli) that provisions an IL4/IL5-grade Assured Workloads boundary in Google Cloud with Vertex AI Gemini access. It implements the `aegis-infra/v1` contract and communicates with aegis-cli's Rust binary over a JSON-line stdout protocol.
 
 The user never interacts with this plugin directly -- aegis-cli invokes it as a subprocess during `aegis init`, `aegis doctor`, and `aegis destroy`.
 
@@ -64,29 +64,24 @@ Three event types in the JSON-line protocol:
 - `check` -- health check results (for `status` subcommand)
 - `result` -- final output with success/failure and outputs object
 
-### Hexagonal Architecture
+### Plugin Structure (SDK-based)
+
+This plugin consumes `@aegis/infra-sdk` which provides protocol, lifecycle, and CLI dispatch. The plugin implements three port interfaces:
 
 ```
 src/
-  index.ts          -- CLI entrypoint: dispatches subcommands
-  domain/
-    types.ts        -- Value objects (ProjectConfig, ResourceOutput, HealthCheck)
-    ports.ts        -- Port interfaces (IaCEngine, HealthChecker, EventEmitter)
-    events.ts       -- Protocol event types conforming to aegis-infra/v1
-  infrastructure/
-    stack.ts        -- Pulumi program definition (KMS, VPC, VPC-SC, audit)
-    automation.ts   -- Pulumi Automation API wrapper (local backend, programmatic up/destroy)
-    health.ts       -- GCP API calls for status checks
-  protocol/
-    emitter.ts      -- JSON-line event emitter to stdout
-    schema.ts       -- Manifest schema definition
+  index.ts          -- Declarative entrypoint: single createPluginCli() call
+  csp-client.ts     -- GCP credential validation and API readiness (implements CspClient)
+  engine.ts         -- Pulumi Automation API wrapper (implements IaCEngine)
+  health.ts         -- GCP health checks (implements HealthChecker)
+  stack.ts          -- Pulumi program definition (GCP resources)
 ```
 
-The domain layer has zero I/O dependencies. Infrastructure implements the domain ports. The protocol layer translates between Pulumi internals and the aegis-infra/v1 wire format.
+All protocol, state machine, and CLI code lives in `@aegis/infra-sdk`. If you are writing event emission or arg parsing, it belongs in the SDK, not here.
 
 ### Pulumi State
 
-State is stored locally at `~/.aegis/state/gcp-cui-gemini/` (not Pulumi Cloud). This is a local dev tool, not a CI deployment -- single user, single workstation, no remote locking.
+State is stored locally at `~/.aegis/state/gcp-assured-workloads/` (not Pulumi Cloud). This is a local dev tool, not a CI deployment -- single user, single workstation, no remote locking.
 
 ## Development Methodology
 
