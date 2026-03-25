@@ -15,11 +15,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: rtmx-ai/aegis-infra-sdk
-          path: ../aegis-infra-sdk
+          path: aegis-infra-sdk
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd ../aegis-infra-sdk && npm ci && npm run build
+      - run: cd aegis-infra-sdk && npm ci && npm run build
+      - run: ln -s $GITHUB_WORKSPACE/aegis-infra-sdk ../aegis-infra-sdk
       - run: npm ci
       - run: npm run format
 
@@ -31,11 +32,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: rtmx-ai/aegis-infra-sdk
-          path: ../aegis-infra-sdk
+          path: aegis-infra-sdk
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd ../aegis-infra-sdk && npm ci && npm run build
+      - run: cd aegis-infra-sdk && npm ci && npm run build
+      - run: ln -s $GITHUB_WORKSPACE/aegis-infra-sdk ../aegis-infra-sdk
       - run: npm ci
       - run: npm run lint
 
@@ -47,11 +49,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: rtmx-ai/aegis-infra-sdk
-          path: ../aegis-infra-sdk
+          path: aegis-infra-sdk
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd ../aegis-infra-sdk && npm ci && npm run build
+      - run: cd aegis-infra-sdk && npm ci && npm run build
+      - run: ln -s $GITHUB_WORKSPACE/aegis-infra-sdk ../aegis-infra-sdk
       - run: npm ci
       - run: npm run build
 
@@ -63,11 +66,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: rtmx-ai/aegis-infra-sdk
-          path: ../aegis-infra-sdk
+          path: aegis-infra-sdk
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd ../aegis-infra-sdk && npm ci && npm run build
+      - run: cd aegis-infra-sdk && npm ci && npm run build
+      - run: ln -s $GITHUB_WORKSPACE/aegis-infra-sdk ../aegis-infra-sdk
       - run: npm ci
       - run: npm run test:unit
 
