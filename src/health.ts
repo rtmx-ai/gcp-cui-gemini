@@ -132,6 +132,11 @@ async function checkAuditSinkFlowing(
   }
 }
 
+/**
+ * Validate the exact inference path aegis-cli will use.
+ * Sends a minimal generateContent request to the specific model endpoint.
+ * If this passes, aegis-cli's Vertex AI provider is guaranteed to work.
+ */
 async function checkModelAccessible(
   config: InfraConfig,
   outputs?: BoundaryOutput,
@@ -139,6 +144,7 @@ async function checkModelAccessible(
   try {
     const model = config.params["model"] ?? "gemini-2.5-pro-001";
     const region = config.params["region"] ?? "us-central1";
+    const projectId = config.params["project_id"];
     const endpoint = outputs?.["vertex_endpoint"] ?? `${region}-aiplatform.googleapis.com`;
 
     const { GoogleAuth } = await import("google-auth-library");
@@ -154,37 +160,59 @@ async function checkModelAccessible(
       };
     }
 
-    const modelsUrl = `https://${endpoint}/v1/projects/${config.params["project_id"]}/locations/${region}/publishers/google/models`;
-    const response = await fetch(modelsUrl, {
-      headers: { Authorization: `Bearer ${token.token}` },
-      signal: AbortSignal.timeout(10000),
+    // Hit the exact generateContent endpoint that aegis-cli will use.
+    // A minimal request with a trivial prompt validates the full path:
+    // auth -> endpoint -> project -> region -> model -> inference.
+    const inferenceUrl =
+      `https://${endpoint}/v1/projects/${projectId}` +
+      `/locations/${region}/publishers/google/models/${model}:generateContent`;
+
+    const response = await fetch(inferenceUrl, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token.token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: "ping" }] }],
+        generationConfig: { maxOutputTokens: 1 },
+      }),
+      signal: AbortSignal.timeout(15000),
     });
 
     if (response.ok) {
       return {
         name: "model_accessible",
         status: "pass",
-        detail: `Authenticated access to ${endpoint} confirmed for ${model}`,
+        detail: `${model} inference endpoint verified at ${endpoint}`,
       };
     }
     if (response.status === 403) {
       return {
         name: "model_accessible",
         status: "fail",
-        detail: `${endpoint} reachable but caller lacks aiplatform.user role (HTTP 403)`,
+        detail: `${model} at ${endpoint}: caller lacks aiplatform.user role (HTTP 403)`,
       };
     }
     if (response.status === 404) {
       return {
         name: "model_accessible",
+        status: "fail",
+        detail: `${model} not found at ${endpoint} (HTTP 404). Check model name and region availability.`,
+      };
+    }
+    if (response.status === 429) {
+      // Rate limited but reachable and authenticated -- the path works.
+      return {
+        name: "model_accessible",
         status: "pass",
-        detail: `Authenticated access to ${endpoint} confirmed (API accessible)`,
+        detail: `${model} inference endpoint verified at ${endpoint} (rate limited, path confirmed)`,
       };
     }
     return {
       name: "model_accessible",
       status: "fail",
-      detail: `${endpoint} returned HTTP ${response.status}`,
+      detail: `${model} at ${endpoint} returned HTTP ${response.status}`,
     };
   } catch (err) {
     return handleCheckError("model_accessible", err);

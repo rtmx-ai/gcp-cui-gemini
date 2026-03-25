@@ -9,6 +9,7 @@ import * as automation from "@pulumi/pulumi/automation/index.js";
 import type { IaCEngine, InfraConfig, BoundaryOutput } from "@aegis/infra-sdk";
 import { resolveStateDir, ensureStateDir, buildStackName } from "@aegis/infra-sdk";
 import { defineResources, extractOutputs } from "./stack.js";
+import { GcpClient } from "./csp-client.js";
 
 const PLUGIN_NAME = "gcp-assured-workloads";
 
@@ -31,18 +32,31 @@ async function getStack(config: InfraConfig): Promise<automation.Stack> {
   );
 }
 
+async function setStackConfig(stack: automation.Stack, config: InfraConfig): Promise<void> {
+  await stack.setConfig("gcp:project", { value: config.params["project_id"] });
+  await stack.setConfig("gcp:region", { value: config.params["region"] ?? "us-central1" });
+
+  // Resolve access policy ID: explicit input > auto-discovery > absent
+  let accessPolicyId = config.params["access_policy_id"];
+  if (!accessPolicyId) {
+    const gcpClient = new GcpClient();
+    accessPolicyId = (await gcpClient.discoverAccessPolicyId(config)) ?? "";
+  }
+  if (accessPolicyId) {
+    await stack.setConfig("aegis:accessPolicyId", { value: accessPolicyId });
+  }
+}
+
 export class GcpPulumiEngine implements IaCEngine {
   async preview(config: InfraConfig): Promise<void> {
     const stack = await getStack(config);
-    await stack.setConfig("gcp:project", { value: config.params["project_id"] });
-    await stack.setConfig("gcp:region", { value: config.params["region"] ?? "us-central1" });
+    await setStackConfig(stack, config);
     await stack.preview();
   }
 
   async up(config: InfraConfig): Promise<BoundaryOutput> {
     const stack = await getStack(config);
-    await stack.setConfig("gcp:project", { value: config.params["project_id"] });
-    await stack.setConfig("gcp:region", { value: config.params["region"] ?? "us-central1" });
+    await setStackConfig(stack, config);
     const result = await stack.up();
     return extractOutputs(result.outputs);
   }

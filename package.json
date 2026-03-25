@@ -19,6 +19,7 @@
     "test:integration": "vitest run tests/integration/",
     "test:e2e": "npx cucumber-js tests/features/",
     "test:watch": "vitest watch",
+    "build:bundle": "bun build src/index.ts --compile --outfile gcp-assured-workloads",
     "precommit": "npm run format && npm run lint && npm run build && npm run test:unit",
     "prepare": "husky"
   },

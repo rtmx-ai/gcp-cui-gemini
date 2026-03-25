@@ -79,4 +79,80 @@ export class GcpClient implements CspClient {
       throw new Error(`Failed to enable ${api}: HTTP ${resp.status} ${body}`);
     }
   }
+
+  /**
+   * Discover the organization's Access Context Manager access policy ID.
+   * Most GCP orgs have exactly one access policy. Returns the policy number
+   * or undefined if none found or insufficient permissions.
+   *
+   * Discovery path: project -> ancestor org -> access policies for that org.
+   */
+  async discoverAccessPolicyId(config: InfraConfig): Promise<string | undefined> {
+    try {
+      const token = await getAdcToken();
+      const projectId = config.params["project_id"];
+
+      // Step 1: Get the project's parent organization
+      const projResp = await fetch(
+        `https://cloudresourcemanager.googleapis.com/v3/projects/${projectId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          signal: AbortSignal.timeout(10000),
+        },
+      );
+      if (!projResp.ok) return undefined;
+
+      const projData = (await projResp.json()) as { parent?: string };
+      // parent is either "organizations/123" or "folders/456"
+      let orgId: string | undefined;
+
+      if (projData.parent?.startsWith("organizations/")) {
+        orgId = projData.parent;
+      } else if (projData.parent?.startsWith("folders/")) {
+        // Walk up the folder hierarchy to find the org
+        const ancestryResp = await fetch(
+          `https://cloudresourcemanager.googleapis.com/v1/projects/${projectId}:getAncestry`,
+          {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            signal: AbortSignal.timeout(10000),
+          },
+        );
+        if (!ancestryResp.ok) return undefined;
+        const ancestry = (await ancestryResp.json()) as {
+          ancestor?: { resourceId: { type: string; id: string } }[];
+        };
+        const org = ancestry.ancestor?.find((a) => a.resourceId.type === "organization");
+        if (org) {
+          orgId = `organizations/${org.resourceId.id}`;
+        }
+      }
+
+      if (!orgId) return undefined;
+
+      // Step 2: List access policies for the organization
+      const policiesResp = await fetch(
+        `https://accesscontextmanager.googleapis.com/v1/accessPolicies?parent=${orgId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          signal: AbortSignal.timeout(10000),
+        },
+      );
+      if (!policiesResp.ok) return undefined;
+
+      const policies = (await policiesResp.json()) as {
+        accessPolicies?: { name?: string }[];
+      };
+
+      if (policies.accessPolicies && policies.accessPolicies.length > 0) {
+        // Return the numeric ID from "accessPolicies/123456"
+        const policyName = policies.accessPolicies[0].name;
+        return policyName?.replace("accessPolicies/", "");
+      }
+
+      return undefined;
+    } catch {
+      return undefined;
+    }
+  }
 }

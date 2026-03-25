@@ -15,6 +15,7 @@ createPluginCli({
     { name: "region", type: "string", default: "us-central1" },
     { name: "impact_level", type: "enum", values: ["IL4", "IL5"], default: "IL4" },
     { name: "model", type: "string", default: "gemini-2.5-pro-001" },
+    { name: "access_policy_id", type: "string" },
   ],
   outputs: [
     "vertex_endpoint",
@@ -32,5 +33,6 @@ createPluginCli({
     "storage.googleapis.com",
     "iam.googleapis.com",
     "cloudresourcemanager.googleapis.com",
+    "accesscontextmanager.googleapis.com",
   ],
 });

@@ -3,3 +3,4 @@ dist/
 coverage/
 *.tsbuildinfo
 .pulumi/
+gcp-assured-workloads
