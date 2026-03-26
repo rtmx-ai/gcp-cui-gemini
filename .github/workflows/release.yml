@@ -14,15 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          repository: rtmx-ai/aegis-infra-sdk
-          path: aegis-infra-sdk
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd aegis-infra-sdk && npm ci && npm run build
-      - run: ln -s $GITHUB_WORKSPACE/aegis-infra-sdk ../aegis-infra-sdk
+          cache: npm
       - run: npm ci
       - run: npm run format
       - run: npm run lint
@@ -54,28 +49,19 @@ jobs:
         include:
           - target: darwin-arm64
             os: macos-latest
-            bun_target: bun-darwin-arm64
           - target: darwin-x64
             os: macos-13
-            bun_target: bun-darwin-x64
           - target: linux-x64
             os: ubuntu-latest
-            bun_target: bun-linux-x64
           - target: linux-arm64
             os: ubuntu-24.04-arm
-            bun_target: bun-linux-arm64
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          repository: rtmx-ai/aegis-infra-sdk
-          path: aegis-infra-sdk
       - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd aegis-infra-sdk && npm ci && npm run build
-      - run: ln -s $GITHUB_WORKSPACE/aegis-infra-sdk ../aegis-infra-sdk
+          cache: npm
       - run: npm ci
       - run: bun build src/index.ts --compile --outfile gcp-assured-workloads-${{ matrix.target }}
       - name: Verify binary responds to manifest

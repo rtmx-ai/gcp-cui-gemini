@@ -24,7 +24,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aegis-cli/infra-sdk": "file:../aegis-infra-sdk",
+    "@aegis-cli/infra-sdk": "^0.1.0",
     "@google-cloud/aiplatform": "^3.0.0",
     "@google-cloud/compute": "^4.0.0",
     "@google-cloud/kms": "^4.0.0",
