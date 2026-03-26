@@ -8,6 +8,8 @@
 
 IL4/IL5 Assured Workloads boundary plugin for [aegis-cli](https://github.com/rtmx-ai/aegis-cli). Provisions a hardened GCP environment with Vertex AI Gemini access for CUI (Controlled Unclassified Information) workloads.
 
+> **Reference Implementation** -- This plugin serves as the exemplar for building aegis-cli infrastructure backend plugins using [@aegis-cli/infra-sdk](https://github.com/rtmx-ai/aegis-infra-sdk). See the [Plugin Authoring Guide](https://github.com/rtmx-ai/aegis-infra-sdk/blob/main/PLUGIN_GUIDE.md) for how to build your own.
+
 ## How It Works
 
 aegis-cli invokes this plugin as a subprocess during `aegis init`, `aegis doctor`, and `aegis destroy`. The user never interacts with this plugin directly.

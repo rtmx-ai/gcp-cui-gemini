@@ -1,0 +1,99 @@
+---
+title: Configuration
+description: Input parameters and configuration options
+---
+
+# Configuration
+
+The plugin accepts input parameters via the `--input` flag as a JSON object. These parameters are declared in the plugin manifest and validated by the SDK before execution.
+
+## Input Parameters
+
+### project_id (required)
+
+The GCP project ID where the Assured Workloads boundary will be provisioned.
+
+- **Type:** string
+- **Required:** yes
+
+```bash
+node dist/index.js up --input '{"project_id":"my-gcp-project"}'
+```
+
+The plugin validates project access during the PREFLIGHT phase using GCP Application Default Credentials. If the project does not exist or the caller lacks access, the plugin exits with a diagnostic error.
+
+### region
+
+The GCP region for all provisioned resources.
+
+- **Type:** string
+- **Default:** `us-central1`
+
+All resources are pinned to the specified region. The default `us-central1` is selected as a hardened US region suitable for CUI workloads. The region must support all required GCP services (Vertex AI, Cloud KMS, VPC-SC).
+
+### impact_level
+
+The NIST 800-171 impact level for the boundary.
+
+- **Type:** enum
+- **Values:** `IL4`, `IL5`
+- **Default:** `IL4`
+
+This value is applied as a compliance label to all provisioned resources. It does not currently change the resource configuration but is included in resource metadata for audit and compliance tracking purposes.
+
+### model
+
+The Vertex AI Gemini model to validate during health checks.
+
+- **Type:** string
+- **Default:** `gemini-2.5-pro-001`
+
+This parameter is used at runtime by the `status` subcommand to validate the inference path. The health check sends a minimal `generateContent` request to the exact model endpoint to verify the full authentication and routing path.
+
+The model is a runtime input rather than a plugin-level constant. This allows operators to validate access to different model versions without rebuilding the plugin. Model names must be explicit versioned identifiers (e.g., `gemini-2.5-pro-001`), not generic aliases.
+
+### access_policy_id
+
+The GCP Access Context Manager policy ID for VPC Service Controls.
+
+- **Type:** string
+- **Required:** no (auto-discovered if absent)
+
+If not provided, the plugin attempts to auto-discover the access policy ID by:
+
+1. Looking up the project's parent organization via the Cloud Resource Manager API.
+2. If the project is under a folder, traversing the ancestry chain to find the organization.
+3. Querying the Access Context Manager API for access policies belonging to that organization.
+4. Using the first discovered policy.
+
+If auto-discovery fails (no organization, no policies, or insufficient permissions), the VPC-SC perimeter resource is skipped. The `perimeter_configured` output will be `"false"` and the `vpc_sc_enforced` health check will report a failure.
+
+To explicitly provide the policy ID:
+
+```bash
+node dist/index.js up --input '{"project_id":"my-project","access_policy_id":"123456789"}'
+```
+
+## Environment Variables
+
+The plugin supports configurable timeouts via environment variables:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `AEGIS_API_TIMEOUT_MS` | 10000 | Timeout for standard GCP API calls |
+| `AEGIS_ENABLE_TIMEOUT_MS` | 30000 | Timeout for API enablement calls |
+| `AEGIS_INFERENCE_TIMEOUT_MS` | 15000 | Timeout for Vertex AI inference health check |
+
+## Outputs
+
+After successful provisioning, the plugin emits the following outputs in the `result` event:
+
+| Output | Description | Validation Pattern |
+|--------|-------------|-------------------|
+| `vertex_endpoint` | Regional Vertex AI endpoint | `^[a-z0-9-]+-aiplatform\.googleapis\.com$` |
+| `kms_key_resource_name` | Full resource name of the CMEK key | `^projects/.+/locations/.+/keyRings/.+/cryptoKeys/.+$` |
+| `vpc_name` | Name of the provisioned VPC network | `^[a-z][a-z0-9-]{0,62}$` |
+| `audit_bucket` | Name of the GCS audit bucket | `^[a-z0-9][a-z0-9._-]{1,220}[a-z0-9]$` |
+| `perimeter_configured` | Whether VPC-SC perimeter was created | `^(true\|false)$` |
+
+All outputs are validated against regex patterns before being emitted to prevent state corruption or injection.

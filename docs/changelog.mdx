@@ -1,0 +1,34 @@
+---
+title: Changelog
+description: Release history for gcp-assured-workloads
+---
+
+# Changelog
+
+## 0.2.0 (2026-03-26)
+
+### Changed
+
+- Renamed from gcp-cui-gemini to gcp-assured-workloads (REQ-SDK-001)
+- Refactored to consume @aegis-cli/infra-sdk (5-file structure)
+- Model is now a runtime input parameter (not baked into plugin name)
+
+### Added
+
+- VPC-SC access policy auto-discovery
+- Inference-path health check (validates exact generateContent endpoint)
+- Plugin bundling via bun compile (4 platform binaries)
+- Domain allowlist in fetchWithRetry (blocks non-Google API calls)
+- State integrity HMAC (detects Pulumi state tampering)
+- Output validation regex patterns for all GCP outputs
+- Enhanced plugin.json with author and security metadata
+- Cosign keyless signing in release workflow
+- Security compliance CI job
+- fetchWithRetry with exponential backoff and retry
+- ADC token caching with expiry-aware refresh
+- Configurable timeouts via AEGIS_*_TIMEOUT_MS env vars
+
+### Security
+
+- REQ-GCG-010: Resilient network operations
+- REQ-GCG-012: Plugin-side security hardening (attacks 3, 4, 6)

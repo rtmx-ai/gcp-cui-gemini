@@ -3,6 +3,27 @@
   "version": "0.2.0",
   "description": "IL4/IL5 Assured Workloads boundary plugin for aegis-cli",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rtmx-ai/gcp-assured-workloads"
+  },
+  "homepage": "https://github.com/rtmx-ai/gcp-assured-workloads",
+  "bugs": {
+    "url": "https://github.com/rtmx-ai/gcp-assured-workloads/issues"
+  },
+  "keywords": [
+    "aegis",
+    "aegis-cli",
+    "plugin",
+    "gcp",
+    "google-cloud",
+    "assured-workloads",
+    "il4",
+    "il5",
+    "cui",
+    "compliance",
+    "pulumi"
+  ],
   "type": "module",
   "main": "dist/index.js",
   "bin": {

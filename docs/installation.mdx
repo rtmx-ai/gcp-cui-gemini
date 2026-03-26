@@ -1,0 +1,79 @@
+---
+title: Installation
+description: How to install the gcp-assured-workloads plugin
+---
+
+# Installation
+
+There are three ways to install the gcp-assured-workloads plugin, depending on your use case.
+
+## Prerequisites
+
+- **GCP Application Default Credentials** -- Run `gcloud auth application-default login` before using the plugin. The plugin authenticates all GCP API calls through ADC.
+- **Pulumi CLI >= 3.181.0** -- The Pulumi Automation API is used for infrastructure provisioning. Install from [pulumi.com/docs/install](https://www.pulumi.com/docs/install/).
+- **Node.js >= 22** -- Required only for development builds. Pre-built binaries do not require Node.js.
+
+## Method 1: Via aegis-cli (Recommended)
+
+When aegis-cli supports plugin installation (planned):
+
+```bash
+aegis plugin install github.com/rtmx-ai/gcp-assured-workloads
+```
+
+This will download the correct binary for your platform and place it in the aegis plugin directory automatically.
+
+## Method 2: Manual Binary
+
+Download the pre-built binary for your platform from [GitHub Releases](https://github.com/rtmx-ai/gcp-assured-workloads/releases).
+
+Available platform binaries:
+
+| Platform | Binary |
+|----------|--------|
+| Linux x64 | `gcp-assured-workloads-linux-x64` |
+| Linux arm64 | `gcp-assured-workloads-linux-arm64` |
+| macOS x64 | `gcp-assured-workloads-darwin-x64` |
+| macOS arm64 | `gcp-assured-workloads-darwin-arm64` |
+
+Place the binary in `~/.aegis/plugins/` and ensure it is executable:
+
+```bash
+chmod +x ~/.aegis/plugins/gcp-assured-workloads-*
+```
+
+All release binaries are signed with cosign keyless signing. Verify signatures with:
+
+```bash
+cosign verify-blob \
+  --certificate gcp-assured-workloads-<platform>.sig.cert \
+  --signature gcp-assured-workloads-<platform>.sig \
+  gcp-assured-workloads-<platform>
+```
+
+## Method 3: Development Build
+
+Clone the repository and build from source:
+
+```bash
+git clone https://github.com/rtmx-ai/gcp-assured-workloads.git
+cd gcp-assured-workloads
+nvm use          # Activates Node.js 22
+npm install
+npm run build
+```
+
+Verify the build by running the manifest subcommand:
+
+```bash
+node dist/index.js manifest
+```
+
+This should output a JSON manifest describing the plugin's inputs, outputs, and version.
+
+For a self-contained binary (requires [Bun](https://bun.sh)):
+
+```bash
+npm run build:bundle
+./gcp-assured-workloads manifest
+```

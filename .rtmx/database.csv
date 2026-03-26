@@ -28,3 +28,6 @@ REQ-GCG-010,INFRA,Resilient Network Operations,src/__tests__/fetch-retry.test.ts
 REQ-GCG-011,INFRA,Plugin Binary Release Workflow,.github/workflows/release.yml,release_workflow,Manual,COMPLETE,HIGH,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-011.md
 REQ-GCG-012,INFRA,Plugin-Side Security Hardening,src/__tests__/domain-allowlist.test.ts,isDomainAllowed,Unit Test,COMPLETE,CRITICAL,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-012.md
 REQ-GCG-012,INFRA,Plugin-Side Security Hardening,src/__tests__/state-integrity.test.ts,verifyStateIntegrity,Unit Test,COMPLETE,CRITICAL,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-012.md
+REQ-GCG-013,INFRA,Plugin Documentation Infrastructure,docs/index.mdx,frontmatter_validation,Manual,COMPLETE,MEDIUM,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-013.md
+REQ-GCG-013,INFRA,Plugin Documentation Infrastructure,CHANGELOG.md,changelog_content,Manual,COMPLETE,MEDIUM,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-013.md
+REQ-GCG-013,INFRA,Plugin Documentation Infrastructure,CONTRIBUTING.md,contributing_content,Manual,COMPLETE,MEDIUM,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-013.md

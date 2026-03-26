@@ -1,0 +1,3 @@
+product: aegis-plugins-gcp
+version: "0.2.0"
+target: aegis/plugins/gcp
