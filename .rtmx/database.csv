@@ -25,4 +25,6 @@ REQ-GCG-008,INFRA,Pre-commit Hook Enforcement,manual,manual_verification,Manual,
 REQ-GCG-009,PROTOCOL,Extract @aegis/infra-sdk for Plugin Ecosystem,aegis-infra-sdk/src/__tests__/entrypoint.test.ts,createPluginCli,Unit Test,PARTIAL,HIGH,Phase 3,.rtmx/requirements/PROTOCOL/REQ-GCG-009.md
 REQ-GCG-009,PROTOCOL,Extract @aegis/infra-sdk for Plugin Ecosystem,aegis-infra-sdk/src/__tests__/lifecycle.test.ts,runLifecycle,Unit Test,PARTIAL,HIGH,Phase 3,.rtmx/requirements/PROTOCOL/REQ-GCG-009.md
 REQ-GCG-010,INFRA,Resilient Network Operations,src/__tests__/fetch-retry.test.ts,resolveTimeout,Unit Test,COMPLETE,HIGH,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-010.md
-REQ-GCG-011,INFRA,Plugin Binary Release Workflow,.github/workflows/release.yml,release_workflow,Manual,NOT_STARTED,HIGH,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-011.md
+REQ-GCG-011,INFRA,Plugin Binary Release Workflow,.github/workflows/release.yml,release_workflow,Manual,COMPLETE,HIGH,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-011.md
+REQ-GCG-012,INFRA,Plugin-Side Security Hardening,src/__tests__/domain-allowlist.test.ts,isDomainAllowed,Unit Test,COMPLETE,CRITICAL,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-012.md
+REQ-GCG-012,INFRA,Plugin-Side Security Hardening,src/__tests__/state-integrity.test.ts,verifyStateIntegrity,Unit Test,COMPLETE,CRITICAL,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-012.md
