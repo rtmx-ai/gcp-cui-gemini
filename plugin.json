@@ -1,0 +1,7 @@
+{
+  "aegis-plugin": true,
+  "contract": "aegis-infra/v1",
+  "name": "gcp-assured-workloads",
+  "description": "IL4/IL5 Assured Workloads boundary in Google Cloud",
+  "binary-prefix": "gcp-assured-workloads"
+}
