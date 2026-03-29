@@ -1,39 +1,15 @@
 req_id,category,requirement_text,test_module,test_function,validation_method,status,priority,phase,requirement_file
-REQ-GCG-001,PROTOCOL,aegis-infra/v1 Plugin Contract,src/domain/__tests__/types.test.ts,parseSubcommand,Unit Test,COMPLETE,CRITICAL,Phase 1,.rtmx/requirements/PROTOCOL/REQ-GCG-001.md
-REQ-GCG-001,PROTOCOL,aegis-infra/v1 Plugin Contract,src/protocol/__tests__/emitter.test.ts,emitEvent,Unit Test,COMPLETE,CRITICAL,Phase 1,.rtmx/requirements/PROTOCOL/REQ-GCG-001.md
 REQ-GCG-001,PROTOCOL,aegis-infra/v1 Plugin Contract,tests/integration/contract.test.ts,contract_scenarios,Integration Test,COMPLETE,CRITICAL,Phase 1,.rtmx/requirements/PROTOCOL/REQ-GCG-001.md
-REQ-GCG-001,PROTOCOL,aegis-infra/v1 Plugin Contract,tests/features/protocol/contract.feature,contract_scenarios,E2E Test,NOT_STARTED,CRITICAL,Phase 1,.rtmx/requirements/PROTOCOL/REQ-GCG-001.md
-REQ-GCG-002,INFRA,GCP Assured Workloads Boundary Provisioning,src/infrastructure/__tests__/stack.test.ts,defineResources,Unit Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-002.md
 REQ-GCG-002,INFRA,GCP Assured Workloads Boundary Provisioning,tests/integration/provisioning.test.ts,provisionBoundary,Integration Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-002.md
-REQ-GCG-002,INFRA,GCP Assured Workloads Boundary Provisioning,tests/features/provisioning/boundary.feature,provisioning_scenarios,E2E Test,NOT_STARTED,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-002.md
-REQ-GCG-003,STATUS,Boundary Health Status Checks,src/infrastructure/__tests__/health.test.ts,aggregateChecks,Unit Test,COMPLETE,HIGH,Phase 3,.rtmx/requirements/STATUS/REQ-GCG-003.md
 REQ-GCG-003,STATUS,Boundary Health Status Checks,tests/integration/health-status.test.ts,statusChecks,Integration Test,COMPLETE,HIGH,Phase 3,.rtmx/requirements/STATUS/REQ-GCG-003.md
-REQ-GCG-003,STATUS,Boundary Health Status Checks,tests/features/status/health.feature,health_scenarios,E2E Test,NOT_STARTED,HIGH,Phase 3,.rtmx/requirements/STATUS/REQ-GCG-003.md
 REQ-GCG-004,INFRA,Local Pulumi State Backend,src/infrastructure/__tests__/automation.test.ts,resolveStateDir,Unit Test,COMPLETE,HIGH,Phase 1,.rtmx/requirements/INFRA/REQ-GCG-004.md
-REQ-GCG-004,INFRA,Local Pulumi State Backend,tests/features/provisioning/state.feature,state_scenarios,E2E Test,NOT_STARTED,HIGH,Phase 1,.rtmx/requirements/INFRA/REQ-GCG-004.md
-REQ-GCG-005,INFRA,Initialization State Machine,src/infrastructure/__tests__/init-state-machine.test.ts,runPreflight,Unit Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-005.md
-REQ-GCG-005,INFRA,Initialization State Machine,src/infrastructure/__tests__/init-state-machine.test.ts,enableApis,Unit Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-005.md
-REQ-GCG-005,INFRA,Initialization State Machine,src/infrastructure/__tests__/init-state-machine.test.ts,pollApiEnabled,Unit Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-005.md
-REQ-GCG-005,INFRA,Initialization State Machine,src/infrastructure/__tests__/init-state-machine.test.ts,runStateMachine,Unit Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-005.md
 REQ-GCG-005,INFRA,Initialization State Machine,tests/integration/provisioning.test.ts,initialization_state_machine,Integration Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-005.md
-REQ-GCG-005,INFRA,Initialization State Machine,tests/features/provisioning/initialization.feature,initialization_scenarios,E2E Test,NOT_STARTED,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-005.md
-REQ-GCG-006,INFRA,Unified State Machine for All Stateful Subcommands,src/infrastructure/__tests__/unified-state-machine.test.ts,checkApiReadiness,Unit Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-006.md
-REQ-GCG-006,INFRA,Unified State Machine for All Stateful Subcommands,src/infrastructure/__tests__/unified-state-machine.test.ts,requireConfirmDestroy,Unit Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-006.md
 REQ-GCG-006,INFRA,Unified State Machine for All Stateful Subcommands,tests/integration/provisioning.test.ts,unified_lifecycle,Integration Test,COMPLETE,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-006.md
-REQ-GCG-006,INFRA,Unified State Machine for All Stateful Subcommands,tests/features/provisioning/unified-lifecycle.feature,unified_lifecycle_scenarios,E2E Test,NOT_STARTED,CRITICAL,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-006.md
-REQ-GCG-007,STATUS,VPC-SC Perimeter Validation and Vertex AI Model Access,src/infrastructure/__tests__/health.test.ts,checkVpcScPerimeter,Unit Test,COMPLETE,HIGH,Phase 3,.rtmx/requirements/STATUS/REQ-GCG-007.md
 REQ-GCG-007,STATUS,VPC-SC Perimeter Validation and Vertex AI Model Access,src/__tests__/health.test.ts,checkVertexAiAccessible,Unit Test,COMPLETE,HIGH,Phase 3,.rtmx/requirements/STATUS/REQ-GCG-007.md
-REQ-GCG-007,STATUS,VPC-SC Perimeter Validation and Vertex AI Model Access,tests/features/status/vpc-sc-vertex.feature,vpc_sc_vertex_scenarios,E2E Test,NOT_STARTED,HIGH,Phase 3,.rtmx/requirements/STATUS/REQ-GCG-007.md
 REQ-GCG-008,INFRA,Pre-commit Hook Enforcement,manual,manual_verification,Manual,COMPLETE,MEDIUM,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-008.md
 REQ-GCG-009,PROTOCOL,Extract @aegis/infra-sdk for Plugin Ecosystem,aegis-infra-sdk/src/__tests__/entrypoint.test.ts,createPluginCli,Unit Test,PARTIAL,HIGH,Phase 3,.rtmx/requirements/PROTOCOL/REQ-GCG-009.md
-REQ-GCG-009,PROTOCOL,Extract @aegis/infra-sdk for Plugin Ecosystem,aegis-infra-sdk/src/__tests__/lifecycle.test.ts,runLifecycle,Unit Test,PARTIAL,HIGH,Phase 3,.rtmx/requirements/PROTOCOL/REQ-GCG-009.md
 REQ-GCG-010,INFRA,Resilient Network Operations,src/__tests__/fetch-retry.test.ts,resolveTimeout,Unit Test,COMPLETE,HIGH,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-010.md
 REQ-GCG-011,INFRA,Plugin Binary Release Workflow,.github/workflows/release.yml,release_workflow,Manual,COMPLETE,HIGH,Phase 2,.rtmx/requirements/INFRA/REQ-GCG-011.md
 REQ-GCG-012,INFRA,Plugin-Side Security Hardening,src/__tests__/domain-allowlist.test.ts,isDomainAllowed,Unit Test,COMPLETE,CRITICAL,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-012.md
-REQ-GCG-012,INFRA,Plugin-Side Security Hardening,src/__tests__/state-integrity.test.ts,verifyStateIntegrity,Unit Test,COMPLETE,CRITICAL,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-012.md
 REQ-GCG-013,INFRA,Plugin Documentation Infrastructure,docs/index.mdx,frontmatter_validation,Manual,COMPLETE,MEDIUM,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-013.md
-REQ-GCG-013,INFRA,Plugin Documentation Infrastructure,CHANGELOG.md,changelog_content,Manual,COMPLETE,MEDIUM,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-013.md
-REQ-GCG-013,INFRA,Plugin Documentation Infrastructure,CONTRIBUTING.md,contributing_content,Manual,COMPLETE,MEDIUM,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-013.md
-REQ-GCG-014,INFRA,E2E Test Infrastructure and GCP Test Harness,.github/workflows/e2e.yml,wif_ci_workflow,Manual,COMPLETE,HIGH,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-014.md
-REQ-GCG-014,INFRA,E2E Test Infrastructure and GCP Test Harness,tests/e2e/harness/shared-fixtures.ts,shared_fixtures,E2E Test,NOT_STARTED,HIGH,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-014.md
-REQ-GCG-014,INFRA,E2E Test Infrastructure and GCP Test Harness,tests/e2e/steps/provisioning.steps.ts,e2e_step_definitions,E2E Test,NOT_STARTED,HIGH,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-014.md
+REQ-GCG-014,INFRA,E2E Test Infrastructure and GCP Test Harness,tests/e2e/steps/provisioning.steps.ts,e2e_step_definitions,E2E Test,COMPLETE,HIGH,Phase 3,.rtmx/requirements/INFRA/REQ-GCG-014.md
